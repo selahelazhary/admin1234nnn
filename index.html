@@ -49,6 +49,38 @@
             --gradient-warning: linear-gradient(135deg, #f8961e 0%, #f9c74f 100%);
         }
 
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --success-light: #34d399;
+            --danger: #ef4444;
+            --danger-light: #f87171;
+            --warning: #f59e0b;
+            --warning-light: #fbbf24;
+            --light: #1e293b;
+            --light-2: #334155;
+            --light-3: #475569;
+            --dark: #f8fafc;
+            --dark-2: #e2e8f0;
+            --dark-3: #cbd5e1;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --card-bg: #1e293b;
+            --card-bg-dark: #0f172a;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.4);
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --gradient-secondary: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -66,6 +98,11 @@
             overflow-x: hidden;
             padding-top: var(--safe-area-top);
             padding-bottom: var(--safe-area-bottom);
+            transition: background-color 0.3s ease;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         }
 
         .container {
@@ -74,21 +111,61 @@
             padding: 20px;
         }
 
-        /* Header Styles - تصميم حديث */
+        /* Header Styles - تصميم حديث محسن */
         header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            padding: 16px 0;
-            margin-bottom: 30px;
+            padding: 12px 24px;
+            margin: 20px auto 30px;
             position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            top: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                0 4px 16px rgba(67, 97, 238, 0.1),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+            max-width: 1200px;
+            width: calc(100% - 40px);
+            transition: all 0.3s ease;
+            animation: headerSlideDown 0.5s ease-out;
+        }
+
+        [data-theme="dark"] header {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 4px 16px rgba(99, 102, 241, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes headerSlideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .logo-container {
@@ -99,12 +176,16 @@
             transition: var(--transition);
             text-decoration: none;
             padding: 8px 16px;
-            border-radius: var(--radius);
+            border-radius: 16px;
         }
 
         .logo-container:hover {
             transform: translateY(-2px);
-            background: rgba(67, 97, 238, 0.05);
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        [data-theme="dark"] .logo-container:hover {
+            background: rgba(99, 102, 241, 0.2);
         }
 
         .logo {
@@ -124,9 +205,75 @@
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
+        [data-theme="dark"] .logo-img {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) 
+                    brightness(1.1);
+        }
+
         .logo-container:hover .logo-img {
             transform: scale(1.05) rotate(2deg);
             filter: drop-shadow(0 4px 8px rgba(67, 97, 238, 0.3));
+        }
+
+        [data-theme="dark"] .logo-container:hover .logo-img {
+            filter: drop-shadow(0 4px 8px rgba(99, 102, 241, 0.4));
+        }
+
+        /* Dark Mode Toggle Button */
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(67, 97, 238, 0.1);
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            background: rgba(67, 97, 238, 0.2);
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        [data-theme="dark"] .theme-toggle:hover {
+            background: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .theme-toggle:hover::before {
+            opacity: 0.1;
+        }
+
+        .theme-toggle i {
+            position: relative;
+            z-index: 1;
         }
 
         /* Card Styles - تصميم حديث */
@@ -322,6 +469,10 @@
             border-left: 4px solid var(--primary);
         }
 
+        [data-theme="dark"] .question {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
         .question h3 {
             font-size: 1.2rem;
             margin-bottom: 20px;
@@ -360,13 +511,17 @@
             position: relative;
             display: flex;
             align-items: center;
-            background: white;
+            background: var(--card-bg);
         }
 
         .option:hover {
             background-color: rgba(67, 97, 238, 0.05);
             border-color: var(--primary-light);
             transform: translateX(4px);
+        }
+
+        [data-theme="dark"] .option:hover {
+            background-color: rgba(99, 102, 241, 0.1);
         }
 
         .option.selected {
@@ -426,7 +581,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            background: white;
+            background: var(--card-bg);
             font-weight: 600;
         }
 
@@ -434,6 +589,10 @@
             background-color: rgba(67, 97, 238, 0.05);
             border-color: var(--primary-light);
             transform: translateY(-2px);
+        }
+
+        [data-theme="dark"] .true-false-btn:hover {
+            background-color: rgba(99, 102, 241, 0.1);
         }
 
         .true-false-btn.selected {
@@ -489,6 +648,10 @@
             background: var(--primary-dark);
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+        }
+
+        [data-theme="dark"] .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
         }
 
         .btn-secondary {
@@ -924,6 +1087,10 @@
             transform: translateX(5px);
         }
 
+        [data-theme="dark"] .admin-nav-item:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
         .admin-nav-item.active {
             background: var(--gradient-primary);
             color: white;
@@ -1017,6 +1184,10 @@
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
 
+        [data-theme="dark"] .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
         textarea.form-control {
             min-height: 120px;
             resize: vertical;
@@ -1044,6 +1215,10 @@
             background: var(--primary-dark);
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+        }
+
+        [data-theme="dark"] .btn-admin:hover {
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
         }
 
         /* تحسين أزرار الإدارة */
@@ -1109,6 +1284,10 @@
             border-radius: 20px;
         }
 
+        [data-theme="dark"] .question-meta span {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .question-meta i {
             font-size: 13px;
         }
@@ -1127,8 +1306,16 @@
             transition: var(--transition);
         }
 
+        [data-theme="dark"] .option-item {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
         .option-item:hover {
             background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] .option-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .correct-option {
@@ -1402,9 +1589,17 @@
             transition: var(--transition);
         }
 
+        [data-theme="dark"] .user-avatar {
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
         .user-profile:hover .user-avatar {
             transform: scale(1.08);
             box-shadow: 0 6px 16px rgba(67, 97, 238, 0.5);
+        }
+
+        [data-theme="dark"] .user-profile:hover .user-avatar {
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
         }
 
         /* Secure Badge - تصميم حديث */
@@ -1637,6 +1832,12 @@
                 0 5px 10px rgba(0, 0, 0, 0.1);
         }
 
+        [data-theme="dark"] .btn-3d:hover {
+            box-shadow: 
+                0 10px 20px rgba(99, 102, 241, 0.3),
+                0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
         .btn-3d:active {
             transform: translateY(2px) scale(0.98);
         }
@@ -1655,6 +1856,10 @@
         .logo-container:hover .logo-img {
             transform: rotateY(12deg) scale(1.06);
             filter: drop-shadow(0 6px 12px rgba(67, 97, 238, 0.4));
+        }
+
+        [data-theme="dark"] .logo-container:hover .logo-img {
+            filter: drop-shadow(0 6px 12px rgba(99, 102, 241, 0.5));
         }
 
         /* Backup Button Styles */
@@ -1751,6 +1956,14 @@
                 flex-direction: column;
                 gap: 16px;
                 text-align: center;
+                padding: 16px;
+                width: calc(100% - 32px);
+                margin: 16px auto 20px;
+            }
+            
+            .header-left, .header-right {
+                width: 100%;
+                justify-content: center;
             }
             
             .logo {
@@ -1764,6 +1977,12 @@
             .back-btn, .admin-toggle {
                 width: 56px;
                 height: 56px;
+            }
+            
+            .theme-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
             }
         }
 
@@ -1831,6 +2050,10 @@
             border-radius: 10px;
         }
         
+        [data-theme="dark"] ::-webkit-scrollbar-track {
+            background: #334155;
+        }
+        
         ::-webkit-scrollbar-thumb {
             background: var(--primary-light);
             border-radius: 10px;
@@ -1842,6 +2065,10 @@
         
         .admin-panel::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.05);
+        }
+        
+        [data-theme="dark"] .admin-panel::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
         }
         
         .admin-panel::-webkit-scrollbar-thumb {
@@ -1856,9 +2083,16 @@
 <body>
     <div class="container">
         <header>
-            <div class="logo-container" id="logo-container">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" alt="Logo" class="logo-img">
-                <div class="logo">إختبارات سلاح الأزهري</div>
+            <div class="header-left">
+                <div class="logo-container" id="logo-container">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" alt="Logo" class="logo-img">
+                    <div class="logo"> سلاح الأزهري</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" id="theme-toggle" title="تبديل الوضع الليلي">
+                    <i class="fas fa-moon"></i>
+                </button>
             </div>
         </header>
         
@@ -2610,6 +2844,9 @@
         let currentEditingQuestionId = null;
         let currentAd = JSON.parse(localStorage.getItem('currentAd')) || null;
         let autoBackupEnabled = localStorage.getItem('autoBackupEnabled') !== 'false';
+        
+        // متغير Dark Mode
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
 
         // عناصر DOM
         const elements = {
@@ -2659,6 +2896,7 @@
             adTitle: document.getElementById('ad-title'),
             adDescription: document.getElementById('ad-description'),
             adAction: document.getElementById('ad-action'),
+            themeToggle: document.getElementById('theme-toggle'),
             
             // عناصر لوحة الإدارة
             questionType: document.getElementById('question-type'),
@@ -2721,12 +2959,21 @@
             backupStatus: document.getElementById('backup-status'),
             backupFile: document.getElementById('backup-file'),
             restoreBackupBtn: document.getElementById('restore-backup-btn'),
-            lastBackupInfo: document.getElementById('last-backup-info')
+            lastBackupInfo: document.getElementById('last-backup-info'),
+            questionYear: document.getElementById('question-year')
         };
 
         // تهيئة التطبيق
         function initApp() {
             try {
+                // تطبيق وضع Dark Mode إذا كان مفعلًا
+                if (isDarkMode) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    if (elements.themeToggle) {
+                        elements.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    }
+                }
+                
                 setupEventListeners();
                 loadInitialData();
                 checkExamStatus();
@@ -2848,13 +3095,22 @@
             }
         }
         
-        // تحديث قوائم الأقسام المنسدلة
-        function updateSectionDropdowns() {
+        // تحديث قوائم الأقسام المنسدلة - مع التصفية حسب الصف
+        function updateSectionDropdowns(selectedYear = '') {
             try {
-                // تحديث قائمة الأقسام في إضافة سؤال
+                // تحديث قائمة الأقسام في إضافة سؤال مع التصفية
                 if (elements.questionSection) {
                     elements.questionSection.innerHTML = '';
-                    sections.forEach(section => {
+                    
+                    let filteredSections = sections;
+                    if (selectedYear) {
+                        // تصفية الأقسام حسب الصف المختار
+                        filteredSections = sections.filter(section => 
+                            section.grades && section.grades.includes(selectedYear)
+                        );
+                    }
+                    
+                    filteredSections.forEach(section => {
                         const option = document.createElement('option');
                         option.value = section.id;
                         option.textContent = section.name;
@@ -2862,7 +3118,7 @@
                     });
                 }
                 
-                // تحديث قائمة الأقسام في إضافة مادة
+                // تحديث قائمة الأقسام في إضافة مادة (بدون تصفية)
                 if (elements.newSubjectSection) {
                     elements.newSubjectSection.innerHTML = '';
                     sections.forEach(section => {
@@ -2888,13 +3144,22 @@
             }
         }
         
-        // تحديث قوائم المواد المنسدلة
-        function updateSubjectDropdowns() {
+        // تحديث قوائم المواد المنسدلة - مع التصفية حسب القسم
+        function updateSubjectDropdowns(selectedSection = '') {
             try {
-                // تحديث قائمة المواد في إضافة سؤال
+                // تحديث قائمة المواد في إضافة سؤال مع التصفية
                 if (elements.questionSubject) {
                     elements.questionSubject.innerHTML = '<option value="">اختر المادة</option>';
-                    subjects.forEach(subject => {
+                    
+                    let filteredSubjects = subjects;
+                    if (selectedSection) {
+                        // تصفية المواد حسب القسم المختار
+                        filteredSubjects = subjects.filter(subject => 
+                            subject.sectionId === selectedSection
+                        );
+                    }
+                    
+                    filteredSubjects.forEach(subject => {
                         const option = document.createElement('option');
                         option.value = subject.id;
                         option.textContent = subject.name;
@@ -2902,7 +3167,7 @@
                     });
                 }
                 
-                // تحديث قائمة المواد في إضافة درس
+                // تحديث قائمة المواد في إضافة درس (بدون تصفية)
                 if (elements.newLessonSubject) {
                     elements.newLessonSubject.innerHTML = '<option value="">اختر المادة</option>';
                     subjects.forEach(subject => {
@@ -2928,13 +3193,22 @@
             }
         }
         
-        // تحديث قوائم الدروس المنسدلة
-        function updateLessonDropdowns() {
+        // تحديث قوائم الدروس المنسدلة - مع التصفية حسب المادة
+        function updateLessonDropdowns(selectedSubject = '') {
             try {
-                // تحديث قائمة الدروس في إضافة سؤال
+                // تحديث قائمة الدروس في إضافة سؤال مع التصفية
                 if (elements.questionLesson) {
                     elements.questionLesson.innerHTML = '<option value="">اختر الدرس (اختياري)</option>';
-                    lessons.forEach(lesson => {
+                    
+                    let filteredLessons = lessons;
+                    if (selectedSubject) {
+                        // تصفية الدروس حسب المادة المختارة
+                        filteredLessons = lessons.filter(lesson => 
+                            lesson.subjectId === selectedSubject
+                        );
+                    }
+                    
+                    filteredLessons.forEach(lesson => {
                         const option = document.createElement('option');
                         option.value = lesson.id;
                         option.textContent = lesson.name;
@@ -2963,13 +3237,22 @@
             }
         }
         
-        // تحديث قوائم الأقسام الفرعية المنسدلة
-        function updateSublessonDropdowns() {
+        // تحديث قوائم الأقسام الفرعية المنسدلة - مع التصفية حسب الدرس
+        function updateSublessonDropdowns(selectedLesson = '') {
             try {
-                // تحديث قائمة الأقسام الفرعية في إضافة سؤال
+                // تحديث قائمة الأقسام الفرعية في إضافة سؤال مع التصفية
                 if (elements.questionSublesson) {
                     elements.questionSublesson.innerHTML = '<option value="">اختر القسم الفرعي (اختياري)</option>';
-                    sublessons.forEach(sublesson => {
+                    
+                    let filteredSublessons = sublessons;
+                    if (selectedLesson) {
+                        // تصفية الأقسام الفرعية حسب الدرس المختار
+                        filteredSublessons = sublessons.filter(sublesson => 
+                            sublesson.lessonId === selectedLesson
+                        );
+                    }
+                    
+                    filteredSublessons.forEach(sublesson => {
                         const option = document.createElement('option');
                         option.value = sublesson.id;
                         option.textContent = sublesson.name;
@@ -3042,6 +3325,11 @@
                         }
                     });
                 });
+                
+                // زر Dark Mode
+                if (elements.themeToggle) {
+                    elements.themeToggle.addEventListener('click', toggleDarkMode);
+                }
                 
                 // زر الرجوع للخلف
                 elements.backBtn.addEventListener('click', function() {
@@ -3262,6 +3550,65 @@
                 
                 if (elements.restoreBackupBtn) {
                     elements.restoreBackupBtn.addEventListener('click', restoreBackup);
+                }
+                
+                // تحديث القوائم المنسدلة عند تغيير الصف في إضافة سؤال
+                if (elements.questionYear) {
+                    elements.questionYear.addEventListener('change', function() {
+                        const selectedYear = this.value;
+                        // تصفية الأقسام حسب الصف المختار
+                        updateSectionDropdowns(selectedYear);
+                        // إعادة تعيين القسم والمادة والدرس والقسم الفرعي
+                        elements.questionSection.value = '';
+                        elements.questionSubject.value = '';
+                        elements.questionLesson.value = '';
+                        elements.questionSublesson.value = '';
+                        // تحديث قائمة المواد (ستظهر عند اختيار قسم)
+                        updateSubjectDropdowns('');
+                        updateLessonDropdowns('');
+                        updateSublessonDropdowns('');
+                    });
+                }
+                
+                // تحديث القوائم المنسدلة عند تغيير القسم في إضافة سؤال
+                if (elements.questionSection) {
+                    elements.questionSection.addEventListener('change', function() {
+                        const selectedSection = this.value;
+                        // تصفية المواد حسب القسم المختار
+                        updateSubjectDropdowns(selectedSection);
+                        // إعادة تعيين المادة والدرس والقسم الفرعي
+                        elements.questionSubject.value = '';
+                        elements.questionLesson.value = '';
+                        elements.questionSublesson.value = '';
+                        // تحديث قائمة الدروس (ستظهر عند اختيار مادة)
+                        updateLessonDropdowns('');
+                        updateSublessonDropdowns('');
+                    });
+                }
+                
+                // تحديث القوائم المنسدلة عند تغيير المادة في إضافة سؤال
+                if (elements.questionSubject) {
+                    elements.questionSubject.addEventListener('change', function() {
+                        const selectedSubject = this.value;
+                        // تصفية الدروس حسب المادة المختارة
+                        updateLessonDropdowns(selectedSubject);
+                        // إعادة تعيين الدرس والقسم الفرعي
+                        elements.questionLesson.value = '';
+                        elements.questionSublesson.value = '';
+                        // تحديث قائمة الأقسام الفرعية (ستظهر عند اختيار درس)
+                        updateSublessonDropdowns('');
+                    });
+                }
+                
+                // تحديث القوائم المنسدلة عند تغيير الدرس في إضافة سؤال
+                if (elements.questionLesson) {
+                    elements.questionLesson.addEventListener('change', function() {
+                        const selectedLesson = this.value;
+                        // تصفية الأقسام الفرعية حسب الدرس المختار
+                        updateSublessonDropdowns(selectedLesson);
+                        // إعادة تعيين القسم الفرعي
+                        elements.questionSublesson.value = '';
+                    });
                 }
             } catch (error) {
                 console.error('خطأ في إعداد مستمعي الأحداث:', error);
@@ -3924,6 +4271,25 @@
                 elements.categoryFilter.style.display = categories.size > 2 ? 'block' : 'none';
             } catch (error) {
                 console.error('خطأ في تحديث قوائم التصنيفات:', error);
+            }
+        }
+        
+        // تبديل وضع Dark Mode
+        function toggleDarkMode() {
+            try {
+                isDarkMode = !isDarkMode;
+                
+                if (isDarkMode) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    elements.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    localStorage.setItem('darkMode', 'true');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                    elements.themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                    localStorage.setItem('darkMode', 'false');
+                }
+            } catch (error) {
+                console.error('خطأ في تبديل وضع Dark Mode:', error);
             }
         }
         
