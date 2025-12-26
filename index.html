@@ -219,6 +219,63 @@
             filter: drop-shadow(0 4px 8px rgba(99, 102, 241, 0.4));
         }
 
+        /* زر الرجوع في التولبار - تصميم مشابه لزر Dark Mode */
+        .header-back-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(67, 97, 238, 0.1);
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        [data-theme="dark"] .header-back-btn {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .header-back-btn:hover {
+            transform: scale(1.1) rotate(-15deg);
+            background: rgba(67, 97, 238, 0.2);
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        [data-theme="dark"] .header-back-btn:hover {
+            background: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .header-back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .header-back-btn:hover::before {
+            opacity: 0.1;
+        }
+
+        .header-back-btn i {
+            position: relative;
+            z-index: 1;
+        }
+
         /* Dark Mode Toggle Button */
         .theme-toggle {
             width: 44px;
@@ -802,7 +859,7 @@
             padding-bottom: 0;
         }
 
-        /* Back Button - تصميم حديث */
+        /* زر الرجوع في أسفل الصفحة - تم إخفاؤه */
         .back-btn {
             position: fixed;
             bottom: 30px;
@@ -819,16 +876,7 @@
             box-shadow: var(--shadow-lg);
             transition: var(--transition);
             z-index: 100;
-            display: none;
-        }
-
-        .back-btn:hover {
-            transform: scale(1.1);
-            background: var(--primary-dark);
-        }
-
-        .back-btn i {
-            font-size: 20px;
+            display: none !important; /* تم إخفاؤه */
         }
 
         /* Loading Overlay - تصميم علمي حديث */
@@ -1953,25 +2001,34 @@
             }
             
             header {
-                flex-direction: column;
-                gap: 16px;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 10px;
                 text-align: center;
-                padding: 16px;
+                padding: 12px 16px;
                 width: calc(100% - 32px);
                 margin: 16px auto 20px;
             }
             
-            .header-left, .header-right {
-                width: 100%;
-                justify-content: center;
+            .header-left {
+                width: auto;
+                justify-content: flex-start;
+                gap: 10px;
+            }
+            
+            .header-right {
+                width: auto;
+                justify-content: flex-end;
+                gap: 8px;
             }
             
             .logo {
-                font-size: 1.4rem;
+                font-size: 1.2rem;
+                display: none;
             }
             
             .logo-img {
-                height: 40px;
+                height: 36px;
             }
             
             .back-btn, .admin-toggle {
@@ -1979,10 +2036,59 @@
                 height: 56px;
             }
             
-            .theme-toggle {
+            .theme-toggle, .header-back-btn {
                 width: 40px;
                 height: 40px;
                 font-size: 1.1rem;
+            }
+            
+            .header-back-btn {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 10px 12px;
+                width: calc(100% - 24px);
+            }
+            
+            .logo {
+                display: none;
+            }
+            
+            .logo-img {
+                height: 32px;
+            }
+            
+            .header-right {
+                gap: 6px;
+            }
+            
+            .theme-toggle, .header-back-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            header {
+                padding: 8px 10px;
+            }
+            
+            .logo-img {
+                height: 28px;
+            }
+            
+            .theme-toggle, .header-back-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
             }
         }
 
@@ -2084,12 +2190,18 @@
     <div class="container">
         <header>
             <div class="header-left">
+                <!-- زر الرجوع في التولبار بجانب الشعار -->
+                <button class="header-back-btn" id="header-back-btn" title="رجوع" style="display: none;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
                 <div class="logo-container" id="logo-container">
                     <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" alt="Logo" class="logo-img">
-                    <div class="logo"> سلاح الأزهري</div>
+                    <div class="logo">سلاح الأزهري</div>
                 </div>
             </div>
+            <h3>سلاح الأزهري</h3>  
             <div class="header-right">
+                <!-- زر الوضع الليلي فقط -->
                 <button class="theme-toggle" id="theme-toggle" title="تبديل الوضع الليلي">
                     <i class="fas fa-moon"></i>
                 </button>
@@ -2235,8 +2347,8 @@
         </div>
     </div>
     
-    <!-- زر الرجوع للخلف -->
-    <div class="back-btn btn-3d" id="back-btn" style="display: none;">
+    <!-- زر الرجوع للخلف - تم إخفاؤه -->
+    <div class="back-btn btn-3d" id="back-btn" style="display: none !important;">
         <i class="fas fa-arrow-left"></i>
     </div>
     
@@ -2897,6 +3009,7 @@
             adDescription: document.getElementById('ad-description'),
             adAction: document.getElementById('ad-action'),
             themeToggle: document.getElementById('theme-toggle'),
+            headerBackBtn: document.getElementById('header-back-btn'),
             
             // عناصر لوحة الإدارة
             questionType: document.getElementById('question-type'),
@@ -2985,10 +3098,86 @@
                 
                 window.addEventListener('beforeunload', saveCurrentState);
                 
+                // إضافة مستمع لزر الرجوع في المتصفح
+                window.addEventListener('popstate', handleBrowserBack);
+                
                 console.log('التطبيق تم تهيئته بنجاح');
             } catch (error) {
                 console.error('خطأ في تهيئة التطبيق:', error);
                 showError('حدث خطأ في تهيئة التطبيق. الرجاء تحديث الصفحة.');
+            }
+        }
+        
+        // دالة التعامل مع زر الرجوع في المتصفح
+        function handleBrowserBack(event) {
+            try {
+                // منع السلوك الافتراضي
+                event.preventDefault();
+                
+                // استدعاء دالة الرجوع
+                goBack();
+            } catch (error) {
+                console.error('خطأ في التعامل مع زر الرجوع في المتصفح:', error);
+            }
+        }
+        
+        // دالة الرجوع الموحدة
+        function goBack() {
+            try {
+                if (elements.quizContainer.style.display === 'block') {
+                    elements.quizContainer.style.display = 'none';
+                    if (selectedSublesson) {
+                        elements.sublessonSelectionContainer.style.display = 'block';
+                        elements.headerBackBtn.style.display = 'flex';
+                    } else if (selectedLesson) {
+                        elements.sublessonSelectionContainer.style.display = 'none';
+                        elements.lessonSelectionContainer.style.display = 'block';
+                        elements.headerBackBtn.style.display = 'flex';
+                        selectedSublesson = '';
+                    } else if (selectedSubject) {
+                        elements.lessonSelectionContainer.style.display = 'none';
+                        elements.subjectSelectionContainer.style.display = 'block';
+                        elements.headerBackBtn.style.display = 'flex';
+                        selectedLesson = '';
+                    } else if (selectedSection) {
+                        elements.subjectSelectionContainer.style.display = 'none';
+                        elements.sectionSelectionContainer.style.display = 'block';
+                        elements.headerBackBtn.style.display = 'flex';
+                        selectedSubject = '';
+                    } else {
+                        elements.sectionSelectionContainer.style.display = 'none';
+                        elements.yearSelectionContainer.style.display = 'grid';
+                        elements.backBtn.style.display = 'none';
+                        elements.headerBackBtn.style.display = 'none';
+                        selectedSection = '';
+                    }
+                } else if (elements.sublessonSelectionContainer.style.display === 'block') {
+                    elements.sublessonSelectionContainer.style.display = 'none';
+                    elements.lessonSelectionContainer.style.display = 'block';
+                    elements.headerBackBtn.style.display = 'flex';
+                    selectedSublesson = '';
+                } else if (elements.lessonSelectionContainer.style.display === 'block') {
+                    elements.lessonSelectionContainer.style.display = 'none';
+                    elements.subjectSelectionContainer.style.display = 'block';
+                    elements.headerBackBtn.style.display = 'flex';
+                    selectedLesson = '';
+                } else if (elements.subjectSelectionContainer.style.display === 'block') {
+                    elements.subjectSelectionContainer.style.display = 'none';
+                    elements.sectionSelectionContainer.style.display = 'block';
+                    elements.headerBackBtn.style.display = 'flex';
+                    selectedSubject = '';
+                } else if (elements.sectionSelectionContainer.style.display === 'block') {
+                    elements.sectionSelectionContainer.style.display = 'none';
+                    elements.yearSelectionContainer.style.display = 'grid';
+                    elements.backBtn.style.display = 'none';
+                    elements.headerBackBtn.style.display = 'none';
+                    selectedSection = '';
+                }
+                
+                saveCurrentState();
+            } catch (error) {
+                console.error('خطأ في دالة الرجوع:', error);
+                showError('حدث خطأ في عملية الرجوع');
             }
         }
         
@@ -3313,6 +3502,7 @@
                             elements.yearSelectionContainer.style.display = 'none';
                             elements.sectionSelectionContainer.style.display = 'block';
                             elements.backBtn.style.display = 'flex';
+                            elements.headerBackBtn.style.display = 'flex';
                             
                             const yearText = getYearText(selectedYear);
                             elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText}`;
@@ -3331,45 +3521,17 @@
                     elements.themeToggle.addEventListener('click', toggleDarkMode);
                 }
                 
-                // زر الرجوع للخلف
-                elements.backBtn.addEventListener('click', function() {
-                    try {
-                        if (elements.quizContainer.style.display === 'block') {
-                            elements.quizContainer.style.display = 'none';
-                            if (selectedSublesson) {
-                                elements.sublessonSelectionContainer.style.display = 'block';
-                            } else if (selectedLesson) {
-                                elements.lessonSelectionContainer.style.display = 'block';
-                            } else if (selectedSubject) {
-                                elements.subjectSelectionContainer.style.display = 'block';
-                            } else {
-                                elements.sectionSelectionContainer.style.display = 'block';
-                            }
-                        } else if (elements.sublessonSelectionContainer.style.display === 'block') {
-                            elements.sublessonSelectionContainer.style.display = 'none';
-                            elements.lessonSelectionContainer.style.display = 'block';
-                            selectedSublesson = '';
-                        } else if (elements.lessonSelectionContainer.style.display === 'block') {
-                            elements.lessonSelectionContainer.style.display = 'none';
-                            elements.subjectSelectionContainer.style.display = 'block';
-                            selectedLesson = '';
-                        } else if (elements.subjectSelectionContainer.style.display === 'block') {
-                            elements.subjectSelectionContainer.style.display = 'none';
-                            elements.sectionSelectionContainer.style.display = 'block';
-                            selectedSubject = '';
-                        } else if (elements.sectionSelectionContainer.style.display === 'block') {
-                            elements.sectionSelectionContainer.style.display = 'none';
-                            elements.yearSelectionContainer.style.display = 'grid';
-                            elements.backBtn.style.display = 'none';
-                            selectedSection = '';
-                        }
-                        
-                        saveCurrentState();
-                    } catch (error) {
-                        console.error('خطأ في زر الرجوع:', error);
-                        showError('حدث خطأ في عملية الرجوع');
-                    }
-                });
+                // زر الرجوع في التولبار
+                if (elements.headerBackBtn) {
+                    elements.headerBackBtn.addEventListener('click', function() {
+                        goBack();
+                    });
+                }
+                
+                // زر الرجوع العائم - تم إخفاؤه
+                // elements.backBtn.addEventListener('click', function() {
+                //     goBack();
+                // });
                 
                 // الانتقال إلى السؤال التالي
                 elements.nextBtn.addEventListener('click', nextQuestion);
@@ -3386,18 +3548,10 @@
                 // الوصول إلى لوحة التحكم الإدارية
                 elements.logoContainer.addEventListener('click', function() {
                     try {
-                        clickCount++;
-                        
-                        if (clickCount === 5) {
-                            showPasswordModal();
-                            clickCount = 0;
-                        }
-                        
-                        setTimeout(() => {
-                            if (clickCount > 0) clickCount--;
-                        }, 3000);
+                        // إعادة تحميل الموقع عند النقر على الشعار
+                        window.location.reload();
                     } catch (error) {
-                        console.error('خطأ في الوصول للوحة التحكم:', error);
+                        console.error('خطأ في إعادة تحميل الصفحة:', error);
                     }
                 });
                 
@@ -3715,6 +3869,7 @@
                     
                     elements.sectionSelectionContainer.style.display = 'none';
                     elements.subjectSelectionContainer.style.display = 'block';
+                    elements.headerBackBtn.style.display = 'flex';
                 } else {
                     elements.subjectContainer.innerHTML = `
                         <div class="no-questions" style="grid-column: 1 / -1;">
@@ -3778,11 +3933,13 @@
                     
                     elements.subjectSelectionContainer.style.display = 'none';
                     elements.lessonSelectionContainer.style.display = 'block';
+                    elements.headerBackBtn.style.display = 'flex';
                 } else {
                     // إذا لم يكن هناك دروس، انتقل مباشرة إلى الاختبارات
                     setTimeout(() => {
                         elements.subjectSelectionContainer.style.display = 'none';
                         elements.quizContainer.style.display = 'block';
+                        elements.headerBackBtn.style.display = 'flex';
                         loadQuestions();
                     }, 500);
                 }
@@ -3828,6 +3985,7 @@
                                 setTimeout(() => {
                                     elements.sublessonSelectionContainer.style.display = 'none';
                                     elements.quizContainer.style.display = 'block';
+                                    elements.headerBackBtn.style.display = 'flex';
                                     loadQuestions();
                                 }, 500);
                                 
@@ -3843,11 +4001,13 @@
                     
                     elements.lessonSelectionContainer.style.display = 'none';
                     elements.sublessonSelectionContainer.style.display = 'block';
+                    elements.headerBackBtn.style.display = 'flex';
                 } else {
                     // إذا لم يكن هناك أقسام فرعية، انتقل مباشرة إلى الاختبارات
                     setTimeout(() => {
                         elements.lessonSelectionContainer.style.display = 'none';
                         elements.quizContainer.style.display = 'block';
+                        elements.headerBackBtn.style.display = 'flex';
                         loadQuestions();
                     }, 500);
                 }
@@ -4051,7 +4211,8 @@
                     console.error('خطأ في تحديث إحصائيات النتائج:', error);
                 });
             } catch (error) {
-                console.error('خطأ في دالة تحديث الإحصائيات:', error);
+                console.error('خطأ في دالة تحديث الإحصائي');
+                console.error('خطأ في دالة تحديث الإحصائي:', error);
             }
         }
         
@@ -4304,6 +4465,7 @@
                 elements.quizContainer.style.display = 'block';
                 elements.resultsContainer.style.display = 'none';
                 elements.backBtn.style.display = 'flex';
+                elements.headerBackBtn.style.display = 'flex';
             } catch (error) {
                 console.error('خطأ في بدء الاختبار:', error);
                 showError('حدث خطأ في بدء الاختبار');
