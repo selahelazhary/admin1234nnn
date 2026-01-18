@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1951,6 +1950,96 @@
             color: var(--danger);
         }
 
+        /* إحصائيات المستخدمين */
+        .user-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .user-stat-card {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .user-stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .user-stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .user-chart-container {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--light-3);
+        }
+
+        .user-chart {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+
+        .user-activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .user-activity-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--light-3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-activity-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-activity-info {
+            flex: 1;
+        }
+
+        .user-activity-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .user-activity-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
         /* Responsive Styles - تصميم حديث */
         @media (max-width: 768px) {
             .year-selection {
@@ -1978,7 +2067,7 @@
                 grid-template-columns: 1fr;
             }
             
-            .admin-stats-grid {
+            .admin-stats-grid, .user-stats-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -2386,6 +2475,10 @@
                 <i class="fas fa-chart-bar"></i>
                 <span>الإحصائيات</span>
             </div>
+            <div class="admin-nav-item" data-tab="user-analytics">
+                <i class="fas fa-users"></i>
+                <span>إحصائيات المستخدمين</span>
+            </div>
             <div class="admin-nav-item" data-tab="sections">
                 <i class="fas fa-layer-group"></i>
                 <span>إدارة الأقسام</span>
@@ -2590,6 +2683,47 @@
                 <div class="admin-card">
                     <h3><i class="fas fa-history"></i> أحدث النتائج</h3>
                     <div id="recent-results">
+                        <!-- سيتم ملؤها ديناميكيًا -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تبويب إحصائيات المستخدمين -->
+            <div id="user-analytics-tab" class="admin-tab-content">
+                <div class="admin-card">
+                    <h3><i class="fas fa-users"></i> إحصائيات المستخدمين</h3>
+                    <div class="user-stats-grid">
+                        <div class="user-stat-card">
+                            <div class="user-stat-value" id="total-users-count">0</div>
+                            <div class="user-stat-label">إجمالي المستخدمين</div>
+                        </div>
+                        <div class="user-stat-card">
+                            <div class="user-stat-value" id="active-users-count">0</div>
+                            <div class="user-stat-label">مستخدمين نشطين</div>
+                        </div>
+                        <div class="user-stat-card">
+                            <div class="user-stat-value" id="daily-active-count">0</div>
+                            <div class="user-stat-label">نشطين اليوم</div>
+                        </div>
+                        <div class="user-stat-card">
+                            <div class="user-stat-value" id="avg-session-count">0</div>
+                            <div class="user-stat-label">متوسط الجلسات</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="admin-card">
+                    <h3><i class="fas fa-chart-line"></i> نشاط المستخدمين</h3>
+                    <div class="user-chart-container">
+                        <div class="user-chart" id="user-activity-chart">
+                            <!-- سيتم ملؤها ديناميكيًا -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="admin-card">
+                    <h3><i class="fas fa-history"></i> أحدث النشاطات</h3>
+                    <div id="user-activity-list" class="user-activity-list">
                         <!-- سيتم ملؤها ديناميكيًا -->
                     </div>
                 </div>
@@ -2956,6 +3090,15 @@
         let currentEditingQuestionId = null;
         let currentAd = JSON.parse(localStorage.getItem('currentAd')) || null;
         let autoBackupEnabled = localStorage.getItem('autoBackupEnabled') !== 'false';
+        let userStats = JSON.parse(localStorage.getItem('userStats')) || {
+            totalVisits: 0,
+            uniqueUsers: new Set(),
+            dailyActiveUsers: new Set(),
+            userSessions: [],
+            activeUsers: new Set(),
+            permanentUsers: new Set(),
+            userActivities: []
+        };
         
         // متغير Dark Mode
         let isDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -3073,12 +3216,23 @@
             backupFile: document.getElementById('backup-file'),
             restoreBackupBtn: document.getElementById('restore-backup-btn'),
             lastBackupInfo: document.getElementById('last-backup-info'),
-            questionYear: document.getElementById('question-year')
+            questionYear: document.getElementById('question-year'),
+            
+            // عناصر إحصائيات المستخدمين
+            totalUsersCount: document.getElementById('total-users-count'),
+            activeUsersCount: document.getElementById('active-users-count'),
+            dailyActiveCount: document.getElementById('daily-active-count'),
+            avgSessionCount: document.getElementById('avg-session-count'),
+            userActivityChart: document.getElementById('user-activity-chart'),
+            userActivityList: document.getElementById('user-activity-list')
         };
 
         // تهيئة التطبيق
         function initApp() {
             try {
+                // تسجيل دخول المستخدم
+                trackUserVisit();
+                
                 // تطبيق وضع Dark Mode إذا كان مفعلًا
                 if (isDarkMode) {
                     document.documentElement.setAttribute('data-theme', 'dark');
@@ -3105,6 +3259,121 @@
             } catch (error) {
                 console.error('خطأ في تهيئة التطبيق:', error);
                 showError('حدث خطأ في تهيئة التطبيق. الرجاء تحديث الصفحة.');
+            }
+        }
+        
+        // تتبع دخول المستخدم
+        function trackUserVisit() {
+            try {
+                // توليد معرف فريد للمستخدم
+                let userId = localStorage.getItem('userId');
+                if (!userId) {
+                    userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('userId', userId);
+                }
+                
+                // تسجيل الجلسة
+                const session = {
+                    userId: userId,
+                    timestamp: new Date().toISOString(),
+                    action: 'visit',
+                    page: window.location.href
+                };
+                
+                // تحديث إحصائيات المستخدمين
+                userStats.totalVisits++;
+                userStats.uniqueUsers.add(userId);
+                
+                // تتبع المستخدمين النشطين اليوم
+                const today = new Date().toDateString();
+                const userKey = `${userId}_${today}`;
+                userStats.dailyActiveUsers.add(userKey);
+                
+                // تتبع المستخدمين النشطين
+                userStats.activeUsers.add(userId);
+                
+                // تسجيل النشاط
+                userStats.userActivities.push(session);
+                
+                // الاحتفاظ بآخر 100 نشاط فقط
+                if (userStats.userActivities.length > 100) {
+                    userStats.userActivities = userStats.userActivities.slice(-100);
+                }
+                
+                // حساب الجلسات لكل مستخدم
+                const userSessions = userStats.userSessions.find(s => s.userId === userId);
+                if (userSessions) {
+                    userSessions.count++;
+                    userSessions.lastVisit = new Date().toISOString();
+                } else {
+                    userStats.userSessions.push({
+                        userId: userId,
+                        count: 1,
+                        firstVisit: new Date().toISOString(),
+                        lastVisit: new Date().toISOString()
+                    });
+                }
+                
+                // حفظ الإحصائيات
+                saveUserStats();
+                
+                // تحديث البيانات في Firebase
+                saveUserActivityToFirebase(session);
+            } catch (error) {
+                console.error('خطأ في تتبع دخول المستخدم:', error);
+            }
+        }
+        
+        // حفظ إحصائيات المستخدمين
+        function saveUserStats() {
+            try {
+                // تحويل Set إلى Array للتخزين
+                const statsToSave = {
+                    totalVisits: userStats.totalVisits,
+                    uniqueUsers: Array.from(userStats.uniqueUsers),
+                    dailyActiveUsers: Array.from(userStats.dailyActiveUsers),
+                    userSessions: userStats.userSessions,
+                    activeUsers: Array.from(userStats.activeUsers),
+                    permanentUsers: Array.from(userStats.permanentUsers),
+                    userActivities: userStats.userActivities
+                };
+                
+                localStorage.setItem('userStats', JSON.stringify(statsToSave));
+            } catch (error) {
+                console.error('خطأ في حفظ إحصائيات المستخدمين:', error);
+            }
+        }
+        
+        // تحميل إحصائيات المستخدمين
+        function loadUserStats() {
+            try {
+                const savedStats = JSON.parse(localStorage.getItem('userStats'));
+                if (savedStats) {
+                    userStats = {
+                        totalVisits: savedStats.totalVisits || 0,
+                        uniqueUsers: new Set(savedStats.uniqueUsers || []),
+                        dailyActiveUsers: new Set(savedStats.dailyActiveUsers || []),
+                        userSessions: savedStats.userSessions || [],
+                        activeUsers: new Set(savedStats.activeUsers || []),
+                        permanentUsers: new Set(savedStats.permanentUsers || []),
+                        userActivities: savedStats.userActivities || []
+                    };
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل إحصائيات المستخدمين:', error);
+            }
+        }
+        
+        // حفظ نشاط المستخدم في Firebase
+        function saveUserActivityToFirebase(session) {
+            try {
+                const userActivityRef = database.ref('userActivities');
+                userActivityRef.push(session)
+                    .catch(error => {
+                        console.error('Error saving user activity:', error);
+                    });
+            } catch (error) {
+                console.error('خطأ في حفظ نشاط المستخدم:', error);
             }
         }
         
@@ -3188,6 +3457,7 @@
                 loadSubjects();
                 loadLessons();
                 loadSublessons();
+                loadUserStats();
                 updateLastBackupInfo();
                 loadAutoBackupSetting();
             } catch (error) {
@@ -4216,6 +4486,164 @@
             }
         }
         
+        // تحديث إحصائيات المستخدمين
+        function updateUserAnalytics() {
+            try {
+                // تحديث الإحصائيات
+                const totalUsers = userStats.uniqueUsers.size;
+                const activeUsers = userStats.activeUsers.size;
+                const dailyActive = userStats.dailyActiveUsers.size;
+                
+                // حساب متوسط الجلسات لكل مستخدم
+                const avgSessions = userStats.userSessions.length > 0 
+                    ? Math.round(userStats.userSessions.reduce((sum, session) => sum + session.count, 0) / userStats.userSessions.length)
+                    : 0;
+                
+                // تحديث عرض الإحصائيات
+                if (elements.totalUsersCount) {
+                    elements.totalUsersCount.textContent = totalUsers;
+                }
+                if (elements.activeUsersCount) {
+                    elements.activeUsersCount.textContent = activeUsers;
+                }
+                if (elements.dailyActiveCount) {
+                    elements.dailyActiveCount.textContent = dailyActive;
+                }
+                if (elements.avgSessionCount) {
+                    elements.avgSessionCount.textContent = avgSessions;
+                }
+                
+                // تحديث مخطط النشاط
+                updateUserActivityChart();
+                
+                // تحديث قائمة النشاطات الأخيرة
+                updateRecentActivities();
+            } catch (error) {
+                console.error('خطأ في تحديث إحصائيات المستخدمين:', error);
+            }
+        }
+        
+        // تحديث مخطط نشاط المستخدمين
+        function updateUserActivityChart() {
+            try {
+                const chartContainer = elements.userActivityChart;
+                if (!chartContainer) return;
+                
+                // تحليل البيانات للحصول على نشاط المستخدمين خلال الأيام السبعة الماضية
+                const today = new Date();
+                const activityData = [];
+                
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toLocaleDateString('ar-SA', { weekday: 'short' });
+                    
+                    // حساب عدد المستخدمين النشطين في هذا اليوم
+                    const dayKey = date.toDateString();
+                    let activeCount = 0;
+                    
+                    // التحقق من جلسات المستخدمين في هذا اليوم
+                    userStats.userActivities.forEach(activity => {
+                        const activityDate = new Date(activity.timestamp);
+                        if (activityDate.toDateString() === dayKey) {
+                            activeCount++;
+                        }
+                    });
+                    
+                    activityData.push({
+                        day: dateStr,
+                        count: activeCount
+                    });
+                }
+                
+                // إنشاء مخطط بسيط باستخدام HTML/CSS
+                const maxCount = Math.max(...activityData.map(d => d.count), 1);
+                
+                let chartHTML = `
+                    <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 250px; padding: 20px;">
+                `;
+                
+                activityData.forEach(data => {
+                    const height = (data.count / maxCount) * 200;
+                    chartHTML += `
+                        <div style="display: flex; flex-direction: column; align-items: center; height: 100%;">
+                            <div style="width: 40px; background: var(--gradient-primary); border-radius: 8px 8px 0 0; height: ${height}px;"></div>
+                            <div style="margin-top: 10px; font-weight: bold; color: var(--text-primary);">${data.count}</div>
+                            <div style="margin-top: 5px; font-size: 12px; color: var(--text-secondary);">${data.day}</div>
+                        </div>
+                    `;
+                });
+                
+                chartHTML += `</div>`;
+                
+                chartContainer.innerHTML = chartHTML;
+            } catch (error) {
+                console.error('خطأ في تحديث مخطط النشاط:', error);
+            }
+        }
+        
+        // تحديث النشاطات الأخيرة
+        function updateRecentActivities() {
+            try {
+                const activityList = elements.userActivityList;
+                if (!activityList) return;
+                
+                // ترتيب النشاطات من الأحدث إلى الأقدم
+                const recentActivities = [...userStats.userActivities]
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .slice(0, 10);
+                
+                activityList.innerHTML = '';
+                
+                if (recentActivities.length === 0) {
+                    activityList.innerHTML = `
+                        <div class="no-questions">
+                            <i class="fas fa-info-circle"></i>
+                            <h3>لا توجد نشاطات مسجلة</h3>
+                            <p>سيتم عرض نشاطات المستخدمين هنا عند زيارة الموقع.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                recentActivities.forEach(activity => {
+                    const activityDate = new Date(activity.timestamp);
+                    const timeAgo = getTimeAgo(activityDate);
+                    
+                    // الحصول على حرفين من معرف المستخدم
+                    const userInitials = activity.userId.substring(0, 2).toUpperCase();
+                    
+                    const activityItem = document.createElement('div');
+                    activityItem.className = 'user-activity-item';
+                    activityItem.innerHTML = `
+                        <div class="user-activity-avatar">${userInitials}</div>
+                        <div class="user-activity-info">
+                            <div class="user-activity-name">مستخدم ${activity.userId.substring(0, 8)}</div>
+                            <div class="user-activity-time">${activity.action === 'visit' ? 'زيارة الموقع' : 'إجراء اختبار'} • ${timeAgo}</div>
+                        </div>
+                    `;
+                    
+                    activityList.appendChild(activityItem);
+                });
+            } catch (error) {
+                console.error('خطأ في تحديث النشاطات الأخيرة:', error);
+            }
+        }
+        
+        // حساب الوقت الماضي
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'الآن';
+            if (diffMins < 60) return `قبل ${diffMins} دقيقة`;
+            if (diffHours < 24) return `قبل ${diffHours} ساعة`;
+            return `قبل ${diffDays} يوم`;
+        }
+        
         // تحميل الأقسام للإدارة
         function loadSectionsForAdmin() {
             try {
@@ -4648,9 +5076,57 @@
                 elements.feedbackDisplay.innerHTML = feedbackHTML;
                 
                 saveQuizResult(score, questions.length, timeTaken);
+                
+                // تسجيل نشاط إجراء اختبار
+                trackQuizCompletion(score, percentage, timeTaken);
             } catch (error) {
                 console.error('خطأ في عرض النتائج:', error);
                 showError('حدث خطأ في عرض النتائج');
+            }
+        }
+        
+        // تتبع إكمال الاختبار
+        function trackQuizCompletion(score, percentage, timeTaken) {
+            try {
+                const userId = localStorage.getItem('userId');
+                const quizSession = {
+                    userId: userId,
+                    timestamp: new Date().toISOString(),
+                    action: 'quiz_complete',
+                    score: score,
+                    percentage: percentage,
+                    timeTaken: timeTaken,
+                    year: selectedYear,
+                    section: selectedSection,
+                    subject: selectedSubject,
+                    lesson: selectedLesson,
+                    sublesson: selectedSublesson
+                };
+                
+                // تسجيل النشاط
+                userStats.userActivities.push(quizSession);
+                
+                // تحديد المستخدمين الدائمين (الذين أكملوا أكثر من 3 اختبارات)
+                const userQuizCount = userStats.userActivities.filter(a => 
+                    a.userId === userId && a.action === 'quiz_complete'
+                ).length;
+                
+                if (userQuizCount >= 3) {
+                    userStats.permanentUsers.add(userId);
+                }
+                
+                // الاحتفاظ بآخر 100 نشاط فقط
+                if (userStats.userActivities.length > 100) {
+                    userStats.userActivities = userStats.userActivities.slice(-100);
+                }
+                
+                // حفظ الإحصائيات
+                saveUserStats();
+                
+                // تحديث Firebase
+                saveUserActivityToFirebase(quizSession);
+            } catch (error) {
+                console.error('خطأ في تتبع إكمال الاختبار:', error);
             }
         }
         
@@ -4778,6 +5254,7 @@
                     loadSubjectsForAdmin();
                     loadLessonsForAdmin();
                     loadSublessonsForAdmin();
+                    updateUserAnalytics();
                 } else {
                     elements.passwordError.style.display = 'block';
                 }
@@ -6094,6 +6571,8 @@
                         loadSectionsForAdmin();
                     } else if (tabId === 'subjects') {
                         loadSubjectsForAdmin();
+                    } else if (tabId === 'user-analytics') {
+                        updateUserAnalytics();
                     } else if (tabId === 'backup') {
                         updateLastBackupInfo();
                     }
@@ -6215,12 +6694,30 @@
             try {
                 if (!autoBackupEnabled) return;
                 
+                console.log('جاري إنشاء نسخة احتياطية تلقائية...');
+                
                 const backupData = {
                     timestamp: new Date().toISOString(),
                     sections: sections,
                     subjects: subjects,
                     lessons: lessons,
-                    sublessons: sublessons
+                    sublessons: sublessons,
+                    userStats: {
+                        totalVisits: userStats.totalVisits,
+                        uniqueUsers: Array.from(userStats.uniqueUsers),
+                        dailyActiveUsers: Array.from(userStats.dailyActiveUsers),
+                        userSessions: userStats.userSessions,
+                        activeUsers: Array.from(userStats.activeUsers),
+                        permanentUsers: Array.from(userStats.permanentUsers),
+                        userActivities: userStats.userActivities
+                    },
+                    appSettings: {
+                        adminPassword: adminPassword,
+                        examActive: examActive,
+                        defaultExamTime: defaultExamTime,
+                        isDarkMode: isDarkMode,
+                        autoBackupEnabled: autoBackupEnabled
+                    }
                 };
                 
                 // احصل على جميع الأسئلة
@@ -6235,14 +6732,39 @@
                     
                     backupData.questions = questions;
                     
-                    // حفظ النسخة الاحتياطية محليًا
-                    localStorage.setItem('autoBackup', JSON.stringify(backupData));
-                    localStorage.setItem('lastBackup', new Date().toISOString());
-                    
-                    console.log('تم إنشاء نسخة احتياطية تلقائية');
-                    
-                    // تحديث معلومات آخر نسخة احتياطية
-                    updateLastBackupInfo();
+                    // احصل على جميع الإعلانات
+                    const adsRef = database.ref('ads');
+                    adsRef.once('value', (snapshot) => {
+                        if (snapshot.exists()) {
+                            backupData.ad = snapshot.val();
+                        }
+                        
+                        // احصل على جميع النتائج
+                        const resultsRef = database.ref('quizResults');
+                        resultsRef.once('value', (snapshot) => {
+                            const results = [];
+                            snapshot.forEach((childSnapshot) => {
+                                const result = childSnapshot.val();
+                                result.id = childSnapshot.key;
+                                results.push(result);
+                            });
+                            
+                            backupData.quizResults = results;
+                            
+                            // حفظ النسخة الاحتياطية محليًا
+                            localStorage.setItem('autoBackup', JSON.stringify(backupData));
+                            localStorage.setItem('lastBackup', new Date().toISOString());
+                            
+                            console.log('تم إنشاء نسخة احتياطية تلقائية');
+                            
+                            // تحديث معلومات آخر نسخة احتياطية
+                            updateLastBackupInfo();
+                        }, (error) => {
+                            console.error('خطأ في الحصول على النتائج للنسخ الاحتياطي:', error);
+                        });
+                    }, (error) => {
+                        console.error('خطأ في الحصول على الإعلانات للنسخ الاحتياطي:', error);
+                    });
                 }, (error) => {
                     console.error('خطأ في الحصول على الأسئلة للنسخ الاحتياطي:', error);
                 });
@@ -6263,7 +6785,23 @@
                     sections: sections,
                     subjects: subjects,
                     lessons: lessons,
-                    sublessons: sublessons
+                    sublessons: sublessons,
+                    userStats: {
+                        totalVisits: userStats.totalVisits,
+                        uniqueUsers: Array.from(userStats.uniqueUsers),
+                        dailyActiveUsers: Array.from(userStats.dailyActiveUsers),
+                        userSessions: userStats.userSessions,
+                        activeUsers: Array.from(userStats.activeUsers),
+                        permanentUsers: Array.from(userStats.permanentUsers),
+                        userActivities: userStats.userActivities
+                    },
+                    appSettings: {
+                        adminPassword: adminPassword,
+                        examActive: examActive,
+                        defaultExamTime: defaultExamTime,
+                        isDarkMode: isDarkMode,
+                        autoBackupEnabled: autoBackupEnabled
+                    }
                 };
                 
                 // احصل على جميع الأسئلة
@@ -6278,30 +6816,59 @@
                     
                     backupData.questions = questions;
                     
-                    // إنشاء ملف JSON للتحميل
-                    const dataStr = JSON.stringify(backupData, null, 2);
-                    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                    
-                    const exportFileDefaultName = `backup-${new Date().toISOString().split('T')[0]}.json`;
-                    
-                    const linkElement = document.createElement('a');
-                    linkElement.setAttribute('href', dataUri);
-                    linkElement.setAttribute('download', exportFileDefaultName);
-                    linkElement.click();
-                    
-                    // حفظ النسخة محليًا أيضًا
-                    localStorage.setItem('manualBackup', dataStr);
-                    localStorage.setItem('lastBackup', new Date().toISOString());
-                    
-                    elements.backupStatus.className = 'backup-status success';
-                    elements.backupStatus.innerHTML = '<i class="fas fa-check"></i> تم إنشاء النسخة الاحتياطية بنجاح!';
-                    
-                    setTimeout(() => {
-                        elements.backupStatus.style.display = 'none';
-                    }, 3000);
-                    
-                    // تحديث معلومات آخر نسخة احتياطية
-                    updateLastBackupInfo();
+                    // احصل على جميع الإعلانات
+                    const adsRef = database.ref('ads');
+                    adsRef.once('value', (snapshot) => {
+                        if (snapshot.exists()) {
+                            backupData.ad = snapshot.val();
+                        }
+                        
+                        // احصل على جميع النتائج
+                        const resultsRef = database.ref('quizResults');
+                        resultsRef.once('value', (snapshot) => {
+                            const results = [];
+                            snapshot.forEach((childSnapshot) => {
+                                const result = childSnapshot.val();
+                                result.id = childSnapshot.key;
+                                results.push(result);
+                            });
+                            
+                            backupData.quizResults = results;
+                            
+                            // إنشاء ملف JSON للتحميل
+                            const dataStr = JSON.stringify(backupData, null, 2);
+                            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                            
+                            const exportFileDefaultName = `backup-${new Date().toISOString().split('T')[0]}.json`;
+                            
+                            const linkElement = document.createElement('a');
+                            linkElement.setAttribute('href', dataUri);
+                            linkElement.setAttribute('download', exportFileDefaultName);
+                            linkElement.click();
+                            
+                            // حفظ النسخة محليًا أيضًا
+                            localStorage.setItem('manualBackup', dataStr);
+                            localStorage.setItem('lastBackup', new Date().toISOString());
+                            
+                            elements.backupStatus.className = 'backup-status success';
+                            elements.backupStatus.innerHTML = '<i class="fas fa-check"></i> تم إنشاء النسخة الاحتياطية بنجاح!';
+                            
+                            setTimeout(() => {
+                                elements.backupStatus.style.display = 'none';
+                            }, 3000);
+                            
+                            // تحديث معلومات آخر نسخة احتياطية
+                            updateLastBackupInfo();
+                        }, (error) => {
+                            console.error('خطأ في الحصول على النتائج للنسخ الاحتياطي:', error);
+                            elements.backupStatus.className = 'backup-status error';
+                            elements.backupStatus.innerHTML = '<i class="fas fa-times"></i> حدث خطأ أثناء إنشاء النسخة الاحتياطية';
+                        });
+                    }, (error) => {
+                        console.error('خطأ في الحصول على الإعلانات للنسخ الاحتياطي:', error);
+                        elements.backupStatus.className = 'backup-status error';
+                        elements.backupStatus.innerHTML = '<i class="fas fa-times"></i> حدث خطأ أثناء إنشاء النسخة الاحتياطية';
+                    });
                 }, (error) => {
                     console.error('خطأ في الحصول على الأسئلة للنسخ الاحتياطي:', error);
                     elements.backupStatus.className = 'backup-status error';
@@ -6418,6 +6985,56 @@
                         delete question.id;
                         questionsRef.push(question);
                     });
+                }
+                
+                // استعادة الإعلانات
+                if (backupData.ad) {
+                    const adsRef = database.ref('ads');
+                    adsRef.set(backupData.ad);
+                }
+                
+                // استعادة النتائج
+                if (backupData.quizResults && Array.isArray(backupData.quizResults)) {
+                    const resultsRef = database.ref('quizResults');
+                    resultsRef.remove(); // حذف البيانات القديمة
+                    
+                    backupData.quizResults.forEach(result => {
+                        const resultId = result.id;
+                        delete result.id;
+                        resultsRef.push(result);
+                    });
+                }
+                
+                // استعادة إحصائيات المستخدمين
+                if (backupData.userStats) {
+                    localStorage.setItem('userStats', JSON.stringify(backupData.userStats));
+                    loadUserStats();
+                }
+                
+                // استعادة إعدادات التطبيق
+                if (backupData.appSettings) {
+                    if (backupData.appSettings.adminPassword) {
+                        adminPassword = backupData.appSettings.adminPassword;
+                        localStorage.setItem('adminPassword', backupData.appSettings.adminPassword);
+                    }
+                    
+                    if (backupData.appSettings.examActive !== undefined) {
+                        examActive = backupData.appSettings.examActive;
+                    }
+                    
+                    if (backupData.appSettings.defaultExamTime) {
+                        defaultExamTime = backupData.appSettings.defaultExamTime;
+                    }
+                    
+                    if (backupData.appSettings.isDarkMode !== undefined) {
+                        isDarkMode = backupData.appSettings.isDarkMode;
+                        localStorage.setItem('darkMode', backupData.appSettings.isDarkMode);
+                    }
+                    
+                    if (backupData.appSettings.autoBackupEnabled !== undefined) {
+                        autoBackupEnabled = backupData.appSettings.autoBackupEnabled;
+                        localStorage.setItem('autoBackupEnabled', backupData.appSettings.autoBackupEnabled);
+                    }
                 }
                 
                 alert('تم استعادة النسخة الاحتياطية بنجاح! سيتم تحديث الصفحة تلقائيًا.');
